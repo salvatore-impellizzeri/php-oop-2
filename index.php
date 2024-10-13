@@ -11,6 +11,8 @@ class Category {
 }
 
 class Product {
+
+    use Available;
     public $title;
     public $price;
     public $img;
@@ -32,7 +34,20 @@ class Product {
     }
 }
 
+trait Available{
+    public $availability = true;
+
+    public function setAvailable(bool $available) {
+        $this->availability = $available;
+    }
+
+    public function getAvailabilityText() {
+        return $this->availability ? "Disponibile" : "Non disponibile";
+    }
+}
+
 class Food extends Product {
+
     public $ingredients;
 
     function __construct(string $title, float $price, string $img, Category|null $category, string $ingredients) {
@@ -42,6 +57,7 @@ class Food extends Product {
 }
 
 class Toy extends Product {
+
     public $materials;
 
     function __construct(string $title, float $price, string $img, Category|null $category, string $materials) {
@@ -51,6 +67,7 @@ class Toy extends Product {
 }
 
 class PetBed extends Product {
+
     public $size;
 
     function __construct(string $title, float $price, string $img, Category|null $category, string $size) {
@@ -84,7 +101,7 @@ $giocoPerGatti = new Toy(
     2.99,
     '',
     $gatti,
-    'Plastica'
+    'Plastica',
 );
 
 $cucciaPerGatti = new PetBed(
@@ -128,6 +145,9 @@ $cucciaPerCani = new PetBed(
     'Big'
 );
 
+$giocoPerGatti->setAvailable(false);
+$ciboPerCani->setAvailable(false);
+
 $products = [
     $prodottoPerGatti,
     $ciboPerGatti,
@@ -170,7 +190,9 @@ $products = [
                 ?>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                         <div class="card">
-                            <img src="<?php echo $product->img ? $product->img : 'https://via.placeholder.com/150'; ?>" alt="Immagine prodotto" class="card-img-top">
+                            <div class="img-container">
+                                <img src="<?php echo $product->img ? $product->img : 'https://via.placeholder.com/150'; ?>" alt="Immagine prodotto" class="card-img-top">
+                            </div>
                             <div class="card-body">
                                 <h2>
                                     <?php echo $product->title; ?>
@@ -203,6 +225,9 @@ $products = [
                                     }
                                     ?>
                                 </h3>
+                                <h6 class="<?php echo $product->availability ? 'text-success' : 'text-danger'; ?>">
+                                    <?php echo $product->getAvailabilityText() ?>
+                                </h6>
                             </div>
                         </div>
                     </div>
